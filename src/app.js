@@ -83,8 +83,12 @@ App = {
     const taskCount = await App.todoList.taskCount()
     const $taskTemplate = $('.taskTemplate')
 
+    // Clear the task list before rendering the new tasks
+    $('#completedTaskList').empty();
+    $('#taskList').empty();
+
     // Render out each task with a new task template
-    for (var i = 1; i <= taskCount; i++) {
+    for (var i = taskCount; i >= 1; i--) {
       // Fetch the task data from the blockchain
       const task = await App.todoList.tasks(i)
       const taskId = task[0].toNumber()
@@ -112,17 +116,25 @@ App = {
   },
 
   createTask: async () => {
+    if (App.isSubmitting) {
+      return
+    }
+  
+    App.isSubmitting = true
     App.setLoading(true)
     const content = $('#newTask').val()
     await App.todoList.createTask(content)
-    window.location.reload()
+    App.renderTasks()
+    App.setLoading(false)
+    App.isSubmitting = false
   },
-
+  
   toggleCompleted: async (e) => {
     App.setLoading(true)
     const taskId = e.target.name
     await App.todoList.toggleCompleted(taskId)
-    window.location.reload()
+    App.renderTasks()
+    App.setLoading(false)
   },
 
   setLoading: (boolean) => {

@@ -26,11 +26,12 @@ contract TodoList {
     createTask("Welcome To The Tweethereum");
   }
 
-  function createTask(string memory _content) public {
-    taskCount ++;
-    tasks[taskCount] = Task(taskCount, _content, false);
-    emit TaskCreated(taskCount, _content, false);
-  }
+  function createTask(string memory _content) public payable {
+  //require(msg.value >= 0.1 ether, "Not enough ETH provided");
+  taskCount ++;
+  tasks[taskCount] = Task(taskCount, _content, false);
+  emit TaskCreated(taskCount, _content, false);
+}
 
   function toggleCompleted(uint _id) public {
     Task memory _task = tasks[_id];
@@ -38,5 +39,6 @@ contract TodoList {
     tasks[_id] = _task;
     emit TaskCompleted(_id, _task.completed);
   }
+
 
 }
